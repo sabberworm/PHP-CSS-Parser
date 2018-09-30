@@ -2,6 +2,7 @@
 
 namespace Sabberworm\CSS\CSSList;
 
+use Sabberworm\CSS\OutputFormat;
 use Sabberworm\CSS\Renderable;
 use Sabberworm\CSS\RuleSet\DeclarationBlock;
 use Sabberworm\CSS\RuleSet\RuleSet;
@@ -90,24 +91,29 @@ abstract class CSSList implements Renderable, Commentable {
 	}
 
 	public function __toString() {
-		return $this->render(new \Sabberworm\CSS\OutputFormat());
+		return $this->render(new OutputFormat());
 	}
 
-	public function render(\Sabberworm\CSS\OutputFormat $oOutputFormat) {
+	/**
+	 * {@inheritdoc}
+	 */
+	public function render(OutputFormat $oOutputFormat) {
 		$sResult = '';
 		$bIsFirst = true;
 		$oNextLevel = $oOutputFormat;
-		if(!$this->isRootList()) {
+		if (!$this->isRootList()) {
 			$oNextLevel = $oOutputFormat->nextLevel();
 		}
 		foreach ($this->aContents as $oContent) {
-			$sRendered = $oOutputFormat->safely(function() use ($oNextLevel, $oContent) {
-				return $oContent->render($oNextLevel);
-			});
-			if($sRendered === null) {
+			$sRendered = $oOutputFormat->safely(
+				function () use ($oNextLevel, $oContent) {
+					return $oContent->render($oNextLevel);
+				}
+			);
+			if ($sRendered === null) {
 				continue;
 			}
-			if($bIsFirst) {
+			if ($bIsFirst) {
 				$bIsFirst = false;
 				$sResult .= $oNextLevel->spaceBeforeBlocks();
 			} else {
@@ -116,14 +122,14 @@ abstract class CSSList implements Renderable, Commentable {
 			$sResult .= $sRendered;
 		}
 
-		if(!$bIsFirst) {
+		if (!$bIsFirst) {
 			// Had some output
 			$sResult .= $oOutputFormat->spaceAfterBlocks();
 		}
 
 		return $sResult;
 	}
-	
+
 	/**
 	* Return true if the list can not be further outdented. Only important when rendering.
 	*/
