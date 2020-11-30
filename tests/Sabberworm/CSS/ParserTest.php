@@ -782,6 +782,12 @@ body {background-url: url("http://somesite.com/images/someimage.gif");}';
 		$this->assertSame($sExpected, $oDoc->render());
 	}
 
+	function testScientificNotationSizeValuesInFile() {
+		$oDoc = $this->parsedStructureForFile('scientific-notation-numbers', Settings::create()->withMultibyteSupport(false));
+		$sExpected = 'body {background-color: rgba(62,174,151,3041820656523200167936);z-index: .030418206565232;font-size: 1em;top: 192.3478px;}';
+		$this->assertSame($sExpected, $oDoc->render());
+	}
+
 	function testLonelyImport() {
 		$oDoc = $this->parsedStructureForFile('lonely-import');
 		$sExpected = "@import url(\"example.css\") only screen and (max-width: 600px);";
