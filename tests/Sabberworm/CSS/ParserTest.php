@@ -787,4 +787,24 @@ body {background-url: url("http://somesite.com/images/someimage.gif");}';
 		$sExpected = "@import url(\"example.css\") only screen and (max-width: 600px);";
 		$this->assertSame($sExpected, $oDoc->render());
 	}
+
+    function getInvalidIdentifiers() {
+        return array(
+            array('body { -0-transition: all .3s ease-in-out; }'),
+            array('body { 4-o-transition: all .3s ease-in-out; }'),
+        );
+	}
+
+    /**
+     * @dataProvider getInvalidIdentifiers
+     *
+     * @param string $css CSS text.
+     */
+    function testInvalidIdentifier($css) {
+        $this->setExpectedException( 'Sabberworm\CSS\Parsing\UnexpectedTokenException' );
+
+        $oSettings = Settings::create()->withLenientParsing(false);
+        $oParser = new Parser($css, $oSettings);
+        $oParser->parse();
+    }
 }
